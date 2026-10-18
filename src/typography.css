@@ -1,0 +1,347 @@
+:root {
+  --type-display: 40px;
+  --type-balance: 34px;
+  --type-stat: 28px;
+  --type-section: 22px;
+  --type-label: 15px;
+  --type-body: 14px;
+  --type-meta: 13px;
+  --type-micro: 11px;
+}
+
+/* Shared type roles used across the budgeting screens and dialogs. */
+.welcome-row h1,
+.page-title-row h1,
+.activity-title h1 { font-size: clamp(36px, 3.2vw, var(--type-display)); }
+.stat-card > b { font-size: var(--type-stat); }
+.plan-summary b,
+.range-report-metrics b { font-size: var(--type-stat); }
+.forecast-balance-row b { font-size: var(--type-balance); }
+.donut-center b { font-size: 26px; }
+.panel-heading h2,
+.activity-toolbar h2,
+.range-report-heading h2,
+.rules-panel .panel-heading h2 { font-size: var(--type-section); }
+
+.nav-item,
+.envelope-nav button,
+.stat-head,
+.envelope-main > b,
+.category-name,
+.upcoming-copy b,
+.upcoming-amount,
+.upcoming-full-copy b,
+.upcoming-full-amount,
+.spending-insight-copy > b { font-size: var(--type-label); }
+
+.page-subtitle,
+.transaction-table td,
+.merchant-cell b,
+.date-cell,
+.amount-cell,
+.forecast-warnings p,
+.spending-insight-copy > p,
+.flow-label b,
+.flow-amount,
+.flow-balance { font-size: var(--type-body); }
+
+.upcoming-copy small,
+.upcoming-full-copy small,
+.merchant-cell small,
+.range-report-metrics small,
+.legend-row,
+.forecast-balance-row,
+.flow-label small,
+.date-label,
+.breadcrumbs { font-size: var(--type-meta); }
+
+.button,
+.form-field label,
+.form-field > span,
+.form-field input:not([type="checkbox"]),
+.form-field select,
+.form-field textarea,
+.form-field .input-prefix > span,
+.income-field span,
+.income-field input,
+.saved-rule-row label span,
+.saved-rule-row input,
+.saved-rule-row select,
+.split-editor-heading label,
+.split-line select,
+.split-amount input,
+.bulk-recategory > span,
+.bulk-recategory select,
+.range-filter,
+.amount-filter,
+.search-box input,
+.select-filter select { font-size: var(--type-body); }
+
+.transaction-table thead th,
+.category-chip,
+.status-cleared,
+.reimburse-status,
+.plan-summary small,
+.upcoming-summary small,
+.range-report-footer,
+.forecast-assumption,
+.forecast-empty,
+.forecast-copy span,
+.forecast-badge,
+.text-button,
+.text-link,
+.all-envelopes { font-size: var(--type-meta); }
+
+.suggestion-heading b,
+.suggestion-text b,
+.draft-row > span,
+.draft-row > small,
+.receipt-row,
+.audit-strip,
+.forecast-copy b,
+.plan-note h3,
+.aside-card h2 { font-size: var(--type-body); }
+
+.suggestion-box > p,
+.suggestion-text small,
+.draft-footnote,
+.ai-explainer p,
+.risk-insight > small,
+.insight-actions button,
+.plan-note p,
+.plan-note button,
+.form-field small { font-size: var(--type-meta); }
+
+.eyebrow,
+.section-kicker,
+.workspace-label,
+.forecast-copy small { font-size: var(--type-micro); }
+
+.stat-card > small,
+.envelope-amount small,
+.category-left small,
+.category-foot,
+.rollover-note,
+.upcoming-copy small,
+.upcoming-full-copy small,
+.forecast-balance-row,
+.flow-label small { color: #59665b; }
+
+@media (max-width: 700px) {
+  .welcome-row h1,
+  .page-title-row h1,
+  .activity-title h1 { font-size: 36px; }
+  .stat-card > b { font-size: 26px; }
+  .panel-heading h2,
+  .activity-toolbar h2,
+  .range-report-heading h2,
+  .rules-panel .panel-heading h2 { font-size: 20px; }
+  .button-cluster .button { font-size: var(--type-meta); }
+}
+
+/* The suggestion draft is information dense, so keep its supporting text clear. */
+.ai-explainer p { color: #59665b; font-size: var(--type-body); line-height: 1.55; }
+.draft-header {
+  grid-template-columns: minmax(120px, 1.35fr) minmax(82px, .9fr) minmax(82px, .85fr) minmax(90px, .9fr);
+  gap: 10px;
+  color: #59665b;
+  font-size: 11px;
+  letter-spacing: .25px;
+  line-height: 1.3;
+}
+.draft-row {
+  grid-template-columns: minmax(120px, 1.35fr) minmax(82px, .9fr) minmax(82px, .85fr) minmax(90px, .9fr);
+  gap: 10px;
+  padding: 11px 12px;
+}
+.draft-row > span { font-size: 16px; color: #29382d; }
+.draft-row > small { font-size: var(--type-body); color: #29382d; line-height: 1.4; }
+.draft-row > small em { color: #59665b; }
+.draft-reason-row { align-items: flex-start; }
+.draft-reason-row small { color: #59665b; font-size: var(--type-meta); line-height: 1.45; }
+.draft-reason-row .rule-save { color: #4d684f; font-size: var(--type-meta); }
+.draft-input input { font-size: var(--type-body) !important; }
+.draft-footnote { color: #59665b; line-height: 1.45; }
+
+@media (max-width: 700px) {
+  .draft-header,
+  .draft-row {
+    grid-template-columns: minmax(105px, 1.2fr) minmax(75px, .85fr) minmax(75px, .85fr) minmax(86px, .9fr);
+    gap: 7px;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+  .draft-header { font-size: 10px; }
+  .draft-row > span { font-size: 15px; }
+}
+
+.form-grid { gap: 15px; }
+.form-field { gap: 7px; }
+.form-field > label:not(.check-field) {
+  color: #465548;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.form-field input:not([type="checkbox"]),
+.form-field select,
+.form-field .input-prefix { min-height: 40px; border-radius: 8px; }
+.form-field input:not([type="checkbox"]),
+.form-field select {
+  padding: 0 11px;
+  color: #29382d;
+  font-size: 14px;
+}
+.input-prefix > span { color: #687568; font-size: 14px; }
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: #899489; }
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus { border-color: #82977c; box-shadow: 0 0 0 3px #e7eee3; }
+.form-field textarea { min-height: 92px; padding: 10px 11px; color: #29382d; font-size: 14px; line-height: 1.5; }
+.optional { color: #687568; }
+.check-field b { color: #29382d; font-size: 14px; }
+.check-field small { color: #59665b; font-size: 12px; line-height: 1.45; }
+.form-actions {
+  gap: 9px;
+  margin-top: 8px;
+  padding-top: 17px;
+  border-color: #e9ece6;
+}
+.form-actions .button { min-height: 39px; padding: 0 14px; border-radius: 8px; }
+.split-editor { padding: 14px; border-color: #e5e9e1; border-radius: 10px; background: #fafbf8; }
+.split-editor-heading label { color: #29382d; font-size: 13px; font-weight: 650; }
+.split-editor > p { color: #59665b; font-size: 12px; line-height: 1.5; }
+.split-lines { gap: 9px; }
+.split-line select,
+.split-amount { min-height: 38px; border-radius: 8px; }
+.split-remainder { color: #59665b; font-size: 12px; }
+.suggestion-box,.ai-explainer { border-color: #e6eadd; border-radius: 10px; background: #f7f8f3; }
+.suggestion-box { padding: 14px; }
+.suggestion-heading b { color: #29382d; font-size: 14px; }
+.suggestion-heading small { color: #59665b; font-size: 11px; }
+.suggestion-box > p,.ai-explainer p { color: #59665b; font-size: 13px; line-height: 1.55; }
+.suggestion-result { gap: 10px; padding: 10px; border-radius: 8px; }
+.suggestion-text b { color: #29382d; font-size: 14px; }
+.suggestion-text small { color: #59665b; font-size: 12px; line-height: 1.4; }
+.rule-save { color: #4d684f; font-size: 12px; font-weight: 600; }
+
+/* Give the plan draft enough room to read as a table instead of a cramped form. */
+.draft-content { gap: 16px; }
+.draft-content .ai-explainer { gap: 12px; padding: 16px 18px; }
+.draft-content .ai-explainer p { font-size: 14px; line-height: 1.55; }
+.draft-table { border-radius: 11px; }
+.draft-header,
+.draft-row {
+  grid-template-columns: minmax(150px, 1.4fr) minmax(115px, 1fr) minmax(110px, 1fr) minmax(120px, 1fr);
+  gap: 14px;
+  padding: 12px 16px;
+}
+.draft-header {
+  color: #687568;
+  font-size: 10px;
+  letter-spacing: .55px;
+  line-height: 1.35;
+}
+.draft-row { min-height: 0; row-gap: 10px; }
+.draft-row > span { color: #29382d; font-size: 15px; line-height: 1.35; }
+.draft-row > small { color: #29382d; font-size: 14px; line-height: 1.45; }
+.draft-row > small em { color: #687568; }
+.draft-input { height: 38px; min-height: 38px; border-radius: 8px; }
+.draft-input input { height: 36px !important; font-size: 14px !important; }
+.draft-reason-row { align-items: center; gap: 16px; }
+.draft-reason-row small { color: #59665b; font-size: 12px; line-height: 1.5; }
+.draft-reason-row .rule-save { flex: 0 0 auto; color: #4d684f; font-size: 12px; }
+.draft-footnote { color: #59665b; font-size: 12px; line-height: 1.5; }
+
+@media (max-width: 700px) {
+  .form-grid { gap: 13px; }
+  .draft-header,
+  .draft-row {
+    grid-template-columns: minmax(105px, 1.2fr) minmax(82px, .9fr) minmax(82px, .9fr) minmax(90px, .9fr);
+    gap: 8px;
+    padding: 10px;
+  }
+  .draft-header { font-size: 9px; }
+  .draft-row > span { font-size: 14px; }
+  .draft-row > small { font-size: 13px; }
+  .draft-reason-row { align-items: flex-start; }
+}
+@media (max-width: 520px) {
+  .draft-header,
+  .draft-row {
+    grid-template-columns: minmax(92px, 1fr) minmax(70px, .8fr) minmax(72px, .8fr) minmax(82px, .9fr);
+    gap: 6px;
+    padding: 9px 8px;
+  }
+  .draft-header { font-size: 8px; letter-spacing: .25px; }
+  .draft-row > span { font-size: 13px; }
+  .draft-row > small { font-size: 12px; }
+  .draft-reason-row { flex-direction: column; gap: 6px; }
+  .form-actions { align-items: stretch; flex-wrap: wrap; }
+  .form-actions .button { flex: 1 1 auto; }
+}
+
+/* Income sources have long labels and need a layout designed for editing. */
+.income-manager { gap: 18px; }
+.income-list { gap: 10px; }
+.income-row {
+  grid-template-columns: minmax(135px, 1.2fr) minmax(105px, .85fr) minmax(145px, 1.1fr) 62px 58px;
+  grid-template-rows: auto auto;
+  align-items: end;
+  gap: 8px 10px;
+  padding: 14px;
+  border-color: #e6eae2;
+  border-radius: 10px;
+  background: #fff;
+}
+.income-row .income-field { align-self: stretch; gap: 7px; }
+.income-row .income-field span {
+  min-height: 32px;
+  display: flex;
+  align-items: flex-end;
+  color: #59665b;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.income-row .income-field input {
+  height: 38px;
+  padding: 0 10px;
+  border-color: #e1e6de;
+  border-radius: 8px;
+  color: #29382d;
+  font-size: 14px;
+}
+.income-row .income-dates {
+  grid-column: 1 / 4;
+  grid-row: 2;
+  color: #687568;
+  font-size: 12px;
+  line-height: 1.4;
+  align-self: center;
+}
+.income-row > .button { grid-column: 4; grid-row: 1; min-height: 38px; padding: 0 9px; }
+.income-row > .rule-save {
+  grid-column: 5;
+  grid-row: 1;
+  align-self: end;
+  min-height: 38px;
+  padding: 0 7px;
+  border: 1px solid #e6eae2;
+  border-radius: 8px;
+  color: #687568;
+}
+.income-row > .rule-save:hover { background: #f7f8f4; color: #29382d; }
+.income-add-form { row-gap: 15px; padding-top: 16px; border-color: #e8ece5; }
+.income-add-form .form-field:first-child { margin: 0; }
+.income-add-form .form-field:first-child label { color: #29382d; font-size: 15px; font-weight: 650; }
+
+@media (max-width: 580px) {
+  .income-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .income-row .income-field:nth-child(1),
+  .income-row .income-field:nth-child(2) { grid-row: 1; }
+  .income-row .income-field:nth-child(3) { grid-column: 1 / -1; grid-row: 2; }
+  .income-row .income-dates { grid-column: 1 / -1; grid-row: 3; }
+  .income-row > .button { grid-column: 1; grid-row: 4; justify-self: start; min-width: 82px; }
+  .income-row > .rule-save { grid-column: 2; grid-row: 4; justify-self: start; min-width: 82px; }
+}

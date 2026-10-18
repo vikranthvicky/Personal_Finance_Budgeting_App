@@ -1,0 +1,12 @@
+export type BudgetPeriod = { planned: number; rollover: 'carry' | 'reset' | 'cap'; cap?: number }
+export type Category = { id: string; name: string; color: string; icon: string; planned: number; plannedByMonth?: Record<string, number>; periods?: Record<string, BudgetPeriod>; rollover: 'carry' | 'reset' | 'cap'; cap?: number }
+export type Split = { id: string; categoryId: string; amount: number }
+export type ReimbursementReceipt = { id: string; date: string; amount: number; note?: string }
+export type Transaction = { id: string; date: string; merchant: string; description: string; amount: number; categoryId: string; account?: string; notes?: string; scheduledOccurrenceId?: string; reimbursable?: boolean; reimbursementAmount?: number; reimbursementReceivedAmount?: number; reimbursementStatus?: 'pending' | 'received'; reimbursements?: ReimbursementReceipt[]; splits?: Split[] }
+export type ScheduleCadence = 'weekly' | 'biweekly' | 'semimonthly' | 'monthly' | 'monthly-weekday' | 'quarterly' | 'yearly' | 'custom'
+export type Recurring = { id: string; name: string; amount: number; categoryId: string; cadence: ScheduleCadence; day: number; secondDay?: number; intervalDays?: number; weekday?: number; weekOrdinal?: 1 | 2 | 3 | 4 | -1; nextDate: string; kind: 'bill' | 'subscription' | 'sinking'; active: boolean }
+export type AuditItem = { id: string; at: string; message: string }
+export type EnvelopeMove = { id: string; date: string; fromCategoryId: string; toCategoryId: string; amount: number; note: string }
+export type CategoryAdjustment = { id: string; date: string; categoryId: string; amount: number; note: string }
+export type IncomeSource = { id: string; name: string; amount: number; cadence: string; frequency?: ScheduleCadence; startDate?: string; day?: number; secondDay?: number; intervalDays?: number; weekday?: number; weekOrdinal?: 1 | 2 | 3 | 4 | -1 }
+export type AppState = { month: string; currentBalance?: number; income: IncomeSource[]; categories: Category[]; transactions: Transaction[]; recurring: Recurring[]; moves: EnvelopeMove[]; adjustments?: CategoryAdjustment[]; audit: AuditItem[]; rules: { id: string; contains: string; categoryId: string }[] }
