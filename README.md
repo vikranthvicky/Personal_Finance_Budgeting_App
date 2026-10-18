@@ -9,7 +9,9 @@ Pocketplan is an envelope budgeting app built with React, TypeScript, Redux Tool
 - npm
 - MySQL 8 or a compatible MySQL server
 
-## Setup
+## Run Pocketplan
+
+### 1. Prepare MySQL
 
 Create the database first:
 
@@ -23,6 +25,8 @@ Create a MySQL user with permission to create tables and read/write data in that
 MYSQL_URL=mysql://pocketplan_app:your-password@localhost:3306/pocketplan
 DATABASE_PATH=./data/pocketplan.sqlite
 ```
+
+Create your local environment file from the example, then add your MySQL connection URL:
 
 PowerShell:
 
@@ -38,23 +42,43 @@ cp .env.example .env
 
 `MYSQL_URL` is required. URL-encode special characters in the username or password. `DATABASE_PATH` is optional and is only used to import existing SQLite data when MySQL has no budgets; Pocketplan does not fall back to SQLite if MySQL is unavailable. `PORT` is optional and defaults to `4000`. Vite defaults to `5173` and proxies `/api` to the API server.
 
-Install packages and start the API and web app:
+### 2. Install dependencies
+
+From the project directory, install the Node.js packages:
 
 ```bash
 npm install
+```
+
+### 3. Start the development app
+
+Start both the Express API and Vite web app together:
+
+```bash
 npm run dev
 ```
 
-Open `http://localhost:5173`. Run only one development process with `npm run dev:web` or `npm run dev:api`.
+Open `http://localhost:5173` in your browser. The API runs at `http://localhost:4000`; its health check is `http://localhost:4000/api/health`. Vite forwards `/api` requests to the API.
 
-For production, build and start the API server:
+To run only one service, use separate terminals from the project directory:
+
+```bash
+npm run dev:api
+npm run dev:web
+```
+
+The API needs `.env` and a reachable MySQL database. The web command serves the frontend only; API requests need the API service running as well.
+
+### Production build
+
+Build the frontend and server, then start the server that serves both the API and built frontend:
 
 ```bash
 npm run build
 npm start
 ```
 
-The build type-checks the frontend and server and writes static assets to `dist`. Express serves those assets along with the API. The health endpoint is `http://localhost:4000/api/health`.
+The build type-checks the frontend and server and writes static assets to `dist`. Open `http://localhost:4000` after starting the server. Keep `.env` configured and MySQL running. The production health endpoint is `http://localhost:4000/api/health`.
 
 ## Database schema
 
