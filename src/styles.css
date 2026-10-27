@@ -76,3 +76,5 @@
 
 .app-shell[aria-busy='true']{cursor:progress}
 
+.sidebar-backdrop{display:none}
+@media(max-width:580px){.sidebar-backdrop{display:block;position:fixed;inset:0;z-index:20;border:0;background:rgba(29,42,32,.38)}}

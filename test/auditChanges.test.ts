@@ -30,3 +30,26 @@ test('audit records reimbursements removed with an expense', () => {
   const events = auditChanges(stateWith(expense()), stateWith(), '2026-10-27T00:00:00.000Z')
   assert.ok(events.some(event => event.message.includes('Reversed reimbursement for removed expense Market') && event.message.includes('80.00')))
 })
+
+test('audit ignores relational array ordering when no records changed', () => {
+  const previous = createDemoState()
+  const next = structuredClone(previous)
+  next.categories.reverse()
+  next.transactions.reverse()
+  next.income.reverse()
+  next.recurring.reverse()
+  assert.deepEqual(auditChanges(previous, next, '2026-10-27T00:00:00.000Z'), [])
+})
+
+test('audit describes income, balance, and transaction changes without generic fallback entries', () => {
+  const previous = createDemoState()
+  const next = structuredClone(previous)
+  next.income[0].amount += 25
+  next.currentBalance = 500
+  next.transactions = [expense()]
+  const events = auditChanges(previous, next, '2026-10-27T00:00:00.000Z')
+  assert.ok(events.some(event => event.message.includes('Updated income source')))
+  assert.ok(events.some(event => event.message.includes('Updated current balance')))
+  assert.ok(events.some(event => event.message.includes('Added expense Market')))
+  assert.ok(events.every(event => !event.message.includes('Financial records updated')))
+})

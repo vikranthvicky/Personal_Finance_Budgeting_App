@@ -102,8 +102,8 @@ export async function loadRelationalState(connection: PoolConnection, budgetId: 
     month: budget.budget_month, currentBalance: numberValue(budget.current_balance), revision: Number(budget.revision), income,
     categories, transactions: txns,
     recurring: recurringRows.map(row => ({ id: row.id, name: row.name, amount: Number(row.amount), categoryId: row.category_id ?? '', cadence: row.cadence, day: Number(row.day), secondDay: numberValue(row.second_day), intervalDays: numberValue(row.interval_days), weekday: numberValue(row.weekday), weekOrdinal: numberValue(row.week_ordinal), nextDate: row.next_date, kind: row.kind, active: Boolean(row.active) })) as Recurring[],
-    moves: moveRows.map(row => ({ id: row.id, date: row.date, fromCategoryId: row.from_category_id, toCategoryId: row.to_category_id, amount: Number(row.amount), note: row.note })),
-    adjustments: adjustmentRows.map(row => ({ id: row.id, date: row.date, categoryId: row.category_id, amount: Number(row.amount), note: row.note })),
+    moves: moveRows.map(row => ({ id: row.id, date: row.date, fromCategoryId: row.from_category_id, toCategoryId: row.to_category_id, amount: Number(row.amount), note: row.note ?? undefined })),
+    adjustments: adjustmentRows.map(row => ({ id: row.id, date: row.date, categoryId: row.category_id, amount: Number(row.amount), note: row.note ?? undefined })),
     audit: auditRows.map(row => ({ id: row.id, at: row.at, message: row.message })),
     rules: ruleRows.map(row => ({ id: row.id, contains: row.contains_phrase, categoryId: row.category_id })),
   }
