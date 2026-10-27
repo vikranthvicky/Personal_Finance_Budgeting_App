@@ -3,7 +3,7 @@ import { loadRelationalState, replaceRelationalState } from '../repository'
 import type { AppState, Transaction } from '../../src/types'
 import type { BudgetSnapshot } from '../validation/snapshot'
 
-function auditChanges(previous: AppState, next: AppState, at: string) {
+export function auditChanges(previous: AppState, next: AppState, at: string) {
   const events: AppState['audit'] = []
   const add = (message: string) => events.push({ id: `server:${crypto.randomUUID()}`, at, message })
   const categories = new Map(next.categories.map(category => [category.id, category.name]))
@@ -38,6 +38,24 @@ function auditChanges(previous: AppState, next: AppState, at: string) {
     const received = (item: Transaction | undefined) => item?.reimbursements?.reduce((sum, receipt) => sum + receipt.amount, 0) ?? item?.reimbursementReceivedAmount ?? (item?.reimbursementStatus === 'received' ? item.reimbursementAmount ?? item.amount : 0)
     const increase = received(transaction) - received(old)
     if (increase > 0.000001) add(`Recorded reimbursement · ${transaction.merchant} · ${increase.toFixed(2)}`)
+  }
+  const received = (item: Transaction | undefined) => item?.reimbursements?.reduce((sum, receipt) => sum + receipt.amount, 0) ?? item?.reimbursementReceivedAmount ?? (item?.reimbursementStatus === 'received' ? item.reimbursementAmount ?? item.amount : 0)
+  const expected = (item: Transaction | undefined) => item?.reimbursementAmount ?? (item?.reimbursable ? item.amount : 0)
+  const nextTransactionIds = new Set(next.transactions.map(item => item.id))
+  for (const transaction of previous.transactions) {
+    if (nextTransactionIds.has(transaction.id)) continue
+    const amount = received(transaction)
+    if (amount > 0.000001) add(`Reversed reimbursement for removed expense ${transaction.merchant}: ${amount.toFixed(2)}`)
+    const expectedAmount = expected(transaction)
+    if (expectedAmount > 0.000001) add(`Removed reimbursement expectation for ${transaction.merchant}: ${expectedAmount.toFixed(2)}`)
+  }
+  for (const transaction of next.transactions) {
+    const old = oldTransactions.get(transaction.id)
+    const delta = received(transaction) - received(old)
+    if (delta < -0.000001) add(`Reversed reimbursement Â· ${transaction.merchant} Â· ${Math.abs(delta).toFixed(2)} (received ${received(old).toFixed(2)} → ${received(transaction).toFixed(2)})`)
+    const expectedBefore = expected(old)
+    const expectedAfter = expected(transaction)
+    if (Math.abs(expectedAfter - expectedBefore) > 0.000001) add(`Changed reimbursement expectation for ${transaction.merchant} Â· ${expectedBefore.toFixed(2)} → ${expectedAfter.toFixed(2)}`)
   }
   const financialFields = (state: AppState) => ({ currentBalance: state.currentBalance, income: state.income, categories: state.categories, transactions: state.transactions, recurring: state.recurring, moves: state.moves, adjustments: state.adjustments ?? [] })
   const financialChange = JSON.stringify(financialFields(previous)) !== JSON.stringify(financialFields(next))
