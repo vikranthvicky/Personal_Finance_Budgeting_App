@@ -16,7 +16,7 @@ const numberValue = (value: unknown) => value === null || value === undefined ? 
 
 export async function replaceRelationalState(connection: PoolConnection, budgetId: string, state: AppState) {
   // Child rows are removed first so every replacement remains valid under FKs.
-  for (const table of ['reimbursement_receipts', 'reimbursements', 'transaction_splits', 'scheduled_occurrences', 'transactions', 'fund_transfers', 'category_adjustments', 'income_sources', 'recurring_rules', 'budget_envelopes', 'category_rules', 'audit_logs', 'categories']) {
+  for (const table of ['reimbursement_receipts', 'reimbursements', 'transaction_splits', 'scheduled_occurrences', 'transactions', 'fund_transfers', 'category_adjustments', 'income_sources', 'recurring_rules', 'budget_envelopes', 'category_rules', 'categories']) {
     await run(connection, `DELETE FROM ${table} WHERE budget_id = ?`, [budgetId])
   }
 
@@ -32,7 +32,7 @@ export async function replaceRelationalState(connection: PoolConnection, budgetI
   await bulk(connection, 'INSERT INTO budget_envelopes (budget_id,category_id,budget_month,planned,rollover,rollover_cap) VALUES ?', envelopes)
 
   await bulk(connection, 'INSERT INTO income_sources (id,budget_id,name,amount,cadence,frequency,start_date,day,second_day,interval_days,weekday,week_ordinal) VALUES ?', state.income.map(item => [item.id,budgetId,item.name,item.amount,item.cadence,item.frequency ?? null,dateValue(item.startDate),item.day ?? null,item.secondDay ?? null,item.intervalDays ?? null,item.weekday ?? null,item.weekOrdinal ?? null]))
-  await bulk(connection, 'INSERT INTO transactions (id,budget_id,transaction_date,merchant,description,amount,category_id,account,notes,scheduled_occurrence_id,reimbursable) VALUES ?', state.transactions.map(item => [item.id,budgetId,item.date,item.merchant,item.description,item.amount,item.categoryId,item.account ?? null,item.notes ?? null,item.scheduledOccurrenceId ?? null,item.reimbursable ?? false]))
+  await bulk(connection, 'INSERT INTO transactions (id,budget_id,transaction_date,merchant,description,amount,category_id,account,notes,scheduled_occurrence_id,reimbursable) VALUES ?', state.transactions.map(item => [item.id,budgetId,item.date,item.merchant,item.description,item.amount,item.categoryId || null,item.account ?? null,item.notes ?? null,item.scheduledOccurrenceId ?? null,item.reimbursable ?? false]))
   await bulk(connection, 'INSERT INTO transaction_splits (id,budget_id,transaction_id,category_id,amount) VALUES ?', state.transactions.flatMap(item => (item.splits ?? []).map(split => [split.id,budgetId,item.id,split.categoryId,split.amount])))
 
   const reimbursementRows: unknown[][] = []
@@ -64,7 +64,7 @@ export async function replaceRelationalState(connection: PoolConnection, budgetI
   await bulk(connection, 'INSERT INTO fund_transfers (id,budget_id,transfer_date,from_category_id,to_category_id,amount,note) VALUES ?', state.moves.map(item => [item.id,budgetId,item.date,item.fromCategoryId,item.toCategoryId,item.amount,item.note]))
   await bulk(connection, 'INSERT INTO category_adjustments (id,budget_id,adjustment_date,category_id,amount,note) VALUES ?', (state.adjustments ?? []).map(item => [item.id,budgetId,item.date,item.categoryId,item.amount,item.note]))
   await bulk(connection, 'INSERT INTO category_rules (id,budget_id,contains_phrase,category_id) VALUES ?', state.rules.map(item => [item.id,budgetId,item.contains,item.categoryId]))
-  await bulk(connection, 'INSERT INTO audit_logs (budget_id,id,at,message) VALUES ?', state.audit.map(item => [budgetId,item.id,item.at,item.message]))
+  await bulk(connection, 'INSERT IGNORE INTO audit_logs (budget_id,id,at,message) VALUES ?', state.audit.map(item => [budgetId,item.id,item.at,item.message]))
 }
 
 export async function loadRelationalState(connection: PoolConnection, budgetId: string): Promise<(AppState & { revision: number }) | null> {
@@ -87,7 +87,7 @@ export async function loadRelationalState(connection: PoolConnection, budgetId: 
     const reimbursement = reimbursementRows.find(item => item.transaction_id === row.id)
     const receipts = receiptRows.filter(item => item.transaction_id === row.id)
     return {
-      id: row.id, date: row.date, merchant: row.merchant, description: row.description, amount: Number(row.amount), categoryId: row.category_id,
+      id: row.id, date: row.date, merchant: row.merchant, description: row.description, amount: Number(row.amount), categoryId: row.category_id ?? '',
       account: row.account ?? undefined, notes: row.notes ?? undefined, scheduledOccurrenceId: row.scheduled_occurrence_id ?? undefined, reimbursable: Boolean(row.reimbursable),
       ...(reimbursement ? { reimbursementAmount: Number(reimbursement.expected_amount), reimbursementReceivedAmount: numberValue(reimbursement.received_legacy_amount), reimbursementStatus: reimbursement.status, ...(reimbursement.has_receipt_list ? { reimbursements: receipts.map(receipt => ({ id: receipt.id, date: receipt.date, amount: Number(receipt.amount), note: receipt.note ?? undefined })) } : {}) } : {}),
       ...(splitRows.some(split => split.transaction_id === row.id) ? { splits: splitRows.filter(split => split.transaction_id === row.id).map(split => ({ id: split.id, categoryId: split.category_id, amount: Number(split.amount) })) } : {}),
@@ -101,7 +101,7 @@ export async function loadRelationalState(connection: PoolConnection, budgetId: 
   return {
     month: budget.budget_month, currentBalance: numberValue(budget.current_balance), revision: Number(budget.revision), income,
     categories, transactions: txns,
-    recurring: recurringRows.map(row => ({ id: row.id, name: row.name, amount: Number(row.amount), categoryId: row.category_id, cadence: row.cadence, day: Number(row.day), secondDay: numberValue(row.second_day), intervalDays: numberValue(row.interval_days), weekday: numberValue(row.weekday), weekOrdinal: numberValue(row.week_ordinal), nextDate: row.next_date, kind: row.kind, active: Boolean(row.active) })) as Recurring[],
+    recurring: recurringRows.map(row => ({ id: row.id, name: row.name, amount: Number(row.amount), categoryId: row.category_id ?? '', cadence: row.cadence, day: Number(row.day), secondDay: numberValue(row.second_day), intervalDays: numberValue(row.interval_days), weekday: numberValue(row.weekday), weekOrdinal: numberValue(row.week_ordinal), nextDate: row.next_date, kind: row.kind, active: Boolean(row.active) })) as Recurring[],
     moves: moveRows.map(row => ({ id: row.id, date: row.date, fromCategoryId: row.from_category_id, toCategoryId: row.to_category_id, amount: Number(row.amount), note: row.note })),
     adjustments: adjustmentRows.map(row => ({ id: row.id, date: row.date, categoryId: row.category_id, amount: Number(row.amount), note: row.note })),
     audit: auditRows.map(row => ({ id: row.id, at: row.at, message: row.message })),

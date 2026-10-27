@@ -1,0 +1,53 @@
+/* Layout adjustments for narrow and intermediate viewports. */
+@media (max-width: 900px) {
+  .overview-grid { grid-template-columns: minmax(0, 1fr); }
+  .right-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plan-layout { grid-template-columns: minmax(0, 1fr); }
+  .plan-aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-content { min-width: 0; }
+  .panel, .welcome-row > *, .plan-summary > * { min-width: 0; }
+}
+
+@media (max-width: 700px) {
+  .right-stack, .plan-aside { grid-template-columns: minmax(0, 1fr); }
+  .welcome-row > div:first-child { max-width: 100%; }
+  .welcome-row h1 { overflow-wrap: anywhere; }
+  .range-report-heading { align-items: flex-start; flex-direction: column; }
+  .range-presets { width: 100%; }
+  .range-presets button { flex: 1 1 auto; }
+  .form-actions { flex-wrap: wrap; }
+}
+
+@media (max-width: 580px) {
+  body { min-width: 320px; }
+  .app-shell, .main-area { width: 100%; min-width: 0; }
+  .topbar { min-width: 0; gap: 6px; }
+  .breadcrumbs { flex: 0 0 auto; }
+  .topbar-actions { flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .topbar-actions::-webkit-scrollbar { display: none; }
+  .topbar-actions > * { flex: 0 0 auto; }
+  .topbar-actions select.date-label { max-width: 88px; overflow: hidden; text-overflow: ellipsis; }
+  .page-content { width: 100%; min-width: 0; padding-left: clamp(10px, 3.5vw, 14px); padding-right: clamp(10px, 3.5vw, 14px); }
+  .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-card { min-width: 0; }
+  .stat-card > b { overflow-wrap: anywhere; }
+  .button-cluster { flex-wrap: wrap; }
+  .button-cluster .button { min-width: 0; white-space: normal; }
+  .activity-toolbar, .filter-tools { min-width: 0; }
+  .filter-tools > * { min-width: 0; }
+  .table-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .range-table { min-width: 0; }
+  .modal-backdrop { align-items: flex-start; padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)); }
+  .modal-card { width: 100%; max-width: 100%; margin-block: auto; padding: 16px; }
+}
+
+@media (max-width: 380px) {
+  .breadcrumbs span, .breadcrumbs .crumb-slash { display: none; }
+  .topbar { padding-left: 8px; padding-right: 8px; }
+  .page-content { padding-left: 9px; padding-right: 9px; }
+  .stat-grid { gap: 6px; }
+  .stat-card { padding: 10px; }
+  .stat-card > b { font-size: 17px; }
+  .plan-summary > div { min-width: calc(50% - 8px); }
+  .range-table-row { grid-template-columns: minmax(74px, 1fr) repeat(3, minmax(43px, .8fr)); }
+}

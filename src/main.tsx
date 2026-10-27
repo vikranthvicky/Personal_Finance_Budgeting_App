@@ -9,5 +9,6 @@ import './small.css'
 import './filters.css'
 import './income.css'
 import './typography.css'
+import './responsive.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><Provider store={store}><App /></Provider></React.StrictMode>)

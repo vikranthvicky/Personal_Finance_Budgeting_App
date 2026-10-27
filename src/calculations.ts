@@ -108,7 +108,7 @@ export function scheduledAmountForMonth(item: { amount: number; frequency?: Sche
 }
 export const totalIncome = (state: AppState, month = state.month) => sumMoney(state.income.map(item => scheduledAmountForMonth(item, month)))
 export type CashFlowEvent = { date: string; scheduledDate?: string; label: string; kind: 'income' | 'bill' | 'transaction' | 'reimbursement' | 'estimate'; amount: number; occurrenceId?: string; balanceAfter: number; warning?: string }
-export function cashFlowTimeline(state: AppState, currentBalance: number, startDate: string, horizonDays = 30): CashFlowEvent[] {
+export function cashFlowTimeline(state: AppState, currentBalance: number, startDate: string, horizonDays = 30, includePlanEstimates = true): CashFlowEvent[] {
   if (!isValidScheduleDate(startDate) || !Number.isFinite(currentBalance) || !Number.isInteger(horizonDays) || horizonDays < 0) throw new RangeError('A valid opening balance, date, and forecast horizon are required.')
   const end = dateParts(startDate); end.setUTCDate(end.getUTCDate() + horizonDays)
   const endDate = dateString(end)
@@ -156,7 +156,7 @@ export function cashFlowTimeline(state: AppState, currentBalance: number, startD
   // are already included in categorySpend, while unpaid scheduled bills are removed
   // separately because their postings do not exist yet.
   const openingByCategory = new Map(state.categories.map(category => [category.id, rolloverAmount(category, state.transactions, startDate.slice(0, 7), state.moves, state.adjustments ?? [])]))
-  for (const month of targetMonths) {
+  if (includePlanEstimates) for (const month of targetMonths) {
     const first = dateParts(`${month}-01`); const monthEnd = calendarDate(first.getUTCFullYear(), first.getUTCMonth() + 1, 0); const calendarMonthEnd = dateString(monthEnd); const estimateDate = calendarMonthEnd > endDate ? endDate : calendarMonthEnd
     if (estimateDate < startDate) continue
     for (const category of state.categories) {

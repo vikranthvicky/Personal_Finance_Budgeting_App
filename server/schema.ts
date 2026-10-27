@@ -54,7 +54,7 @@ export const relationalSchema = [
     merchant VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     amount DECIMAL(14,2) NOT NULL,
-    category_id VARCHAR(64) NOT NULL,
+    category_id VARCHAR(64) NULL,
     account VARCHAR(120) NULL,
     notes TEXT NULL,
     scheduled_occurrence_id VARCHAR(160) NULL,

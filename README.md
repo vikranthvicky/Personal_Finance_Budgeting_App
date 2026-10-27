@@ -40,7 +40,7 @@ macOS/Linux:
 cp .env.example .env
 ```
 
-`MYSQL_URL` is required. URL-encode special characters in the username or password. `DATABASE_PATH` is optional and is only used to import existing SQLite data when MySQL has no budgets; Pocketplan does not fall back to SQLite if MySQL is unavailable. `PORT` is optional and defaults to `4000`. Vite defaults to `5173` and proxies `/api` to the API server.
+`MYSQL_URL` is required. URL-encode special characters in the username or password. `OPENROUTER_API_KEY` is optional and enables model-assisted suggestions; `OPENROUTER_MODEL` defaults to `openrouter/free`. `DATABASE_PATH` is optional and is only used to import existing SQLite data when MySQL has no budgets; Pocketplan does not fall back to SQLite if MySQL is unavailable. `PORT` is optional and defaults to `4000`. Vite defaults to `5173` and proxies `/api` to the API server.
 
 ### 2. Install dependencies
 
@@ -68,6 +68,14 @@ npm run dev:web
 ```
 
 The API needs `.env` and a reachable MySQL database. The web command serves the frontend only; API requests need the API service running as well.
+
+### Frontend structure
+
+`src/App.tsx` composes the application and coordinates shared state, navigation, API synchronization, persistence, and cross-screen actions. Reusable dashboard and activity UI lives in `src/components/DashboardComponents.tsx`; dialog and recurring-item forms live in `src/components/DialogComponents.tsx`; transaction categorization, split, and reimbursement assistance lives in `src/components/TransactionAssistance.tsx`. Calculation rules remain in `src/calculations.ts`.
+
+### Backend structure
+
+`server/index.ts` configures Express, initializes storage, and wires dependencies. HTTP endpoints are grouped in `server/routes/ai.ts` and `server/routes/budgets.ts`; request snapshot schemas are in `server/validation/snapshot.ts`; recurring-post state transitions and revision-locked saves are in `server/services/recurringPost.ts` and `server/services/budgetPersistence.ts`. Relational reads and writes remain in `server/repository.ts`.
 
 ### Production build
 
@@ -130,19 +138,20 @@ Back up any SQLite database before its first import. For the MySQL integration t
 
 ## AI usage and external services
 
-Pocketplan does not call a generative AI model or third-party AI, analytics, or categorization service. There is no AI provider key or external AI endpoint configured. “Smart” and “AI” labels in the interface refer to local, explainable suggestions implemented in `src/calculations.ts` and `src/App.tsx`:
+Pocketplan offers two optional model-assisted workflows through OpenRouter chat completions:
 
-- Category suggestions apply user rules first, then use prior transaction history, text cues, and an amount-based fallback. A confidence level and reason are shown.
-- Split suggestions reuse a prior split from the same merchant or offer a low-confidence 70/30 groceries/household estimate for supported bulk-store merchants. Suggested lines can be edited before saving.
-- Reimbursement suggestions use work, client, and team-meal wording. They only enable the flag after the user accepts; the expected amount remains editable.
-- Plan drafts average a category's actual spending over the three completed months before the selected budget month, including months with no transactions, then round to the nearest $10. Drafts stay separate from actual transactions until applied.
-- Spending alerts compare month-to-date category spending with the same elapsed dates in the prior three months. Forecast alerts use saved schedules, transactions, and envelope plans.
+- Category suggestions interpret a transaction using its merchant, description, notes, amount, available envelope names, and up to 15 recent transaction examples.
+- Split suggestions assess whether a transaction plausibly spans multiple envelopes and propose amounts that sum to the entered total. A split appears only when the returned envelope IDs and amounts pass validation.
 
-These features do not send transaction or budget data to an AI provider or other third party. The browser calls Pocketplan's own same-origin Express `/api` routes. Suggestions and alerts never move funds, change plans, categorize or split a saved transaction, or post a bill without an explicit user action.
+Both require an explicit "Ask AI" click. Suggestions remain drafts until the user accepts them; category and split fields can still be edited before saving. The model never writes to budget data. Local category, split, reimbursement, plan-draft, and alert heuristics remain available as separate explainable workflows.
+
+To enable model suggestions, set `OPENROUTER_API_KEY` in `.env`. The default model is `openrouter/free`, which routes to an available free model; `OPENROUTER_MODEL` can override it. Without a key, other app features continue to work and AI suggestion requests show a setup message. The key is used only by the Express server and is never sent to the browser.
+
+When requested, transaction text, amount, category names, and (for category suggestions) up to 15 recent transaction examples are sent to OpenRouter for inference. Do not request an AI suggestion for data you do not want sent to this provider. OpenRouter free routing can have rate limits and availability changes. See [OpenRouter Free Models Router](https://openrouter.ai/openrouter/free/apps) and [chat completions API](https://openrouter.ai/docs/api/api-reference/chat/send-chat-completion-request).
 
 ## Tradeoffs and limits
 
-- Suggestions are deterministic heuristics, not machine learning. They are easy to inspect and reproduce, but a phrase or merchant cue can be wrong. Review categories, splits, and reimbursement expectations before saving.
+- The local suggestions are deterministic heuristics, not machine learning. Model suggestions can also be wrong or unavailable; review categories, splits, and reimbursement expectations before saving.
 - The 70/30 bulk-store split is a generic starting estimate, not a receipt-based prediction. It is only offered when matching grocery/food and household/home envelopes exist.
 - Plan drafts use a simple three-month average and nearest-$10 rounding. They do not forecast seasonality, income constraints, upcoming one-off events, or individual preferences; zero-spend months count as zero.
 - Anomaly thresholds are intentionally simple: current month-to-date spend must be at least 1.5 times its same-period historical average and at least $20 higher. Sparse history may produce no alert or a misleading baseline.
@@ -174,6 +183,8 @@ npm test
 ```
 
 Calculation and schedule tests run without a database. The MySQL integration test is skipped unless `MYSQL_TEST_URL` is set. Configure it to a dedicated disposable test database; the test starts an API process, inserts a legacy JSON budget to exercise migration, and creates and updates test records.
+
+The test runner bundles the TypeScript test files with esbuild before passing them to Node's built-in test runner. This avoids requiring Node's experimental TypeScript stripping flag.
 
 PowerShell:
 

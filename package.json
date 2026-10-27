@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm:dev:api\" \"npm:dev:web\"",
     "dev:web": "vite --host 0.0.0.0",
     "dev:api": "node --env-file=.env --import tsx --watch server/index.ts",
-    "test": "node --experimental-strip-types --test test/calculations.test.ts test/server.integration.test.ts",
+    "test": "node test/run-tests.mjs",
     "build": "tsc -b && tsc -p tsconfig.server.json && vite build",
     "start": "node --env-file=.env --import tsx server/index.ts"
   },
@@ -32,6 +32,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.2",
+    "esbuild": "^0.28.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.3",

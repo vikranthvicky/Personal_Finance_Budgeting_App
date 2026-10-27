@@ -345,3 +345,23 @@
   .income-row > .button { grid-column: 1; grid-row: 4; justify-self: start; min-width: 82px; }
   .income-row > .rule-save { grid-column: 2; grid-row: 4; justify-self: start; min-width: 82px; }
 }
+
+.income-schedule-fields { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px 10px; padding-top: 4px; }
+.income-schedule-fields .income-field { display: grid; gap: 6px; min-width: 0; }
+.income-schedule-fields .income-field span { min-height: 0; display: block; color: #687568; font-size: 11px; }
+.income-schedule-fields input, .income-schedule-fields select, .income-row .income-field select { width: 100%; min-width: 0; height: 38px; padding: 0 9px; border: 1px solid #e1e6de; border-radius: 8px; background: white; color: #29382d; font-size: 13px; }
+.income-row .income-dates { grid-column: 1 / 4; grid-row: auto; }
+.income-row > .button { grid-column: 4; grid-row: auto; }
+.income-row > .rule-save { grid-column: 5; grid-row: auto; }
+@media (max-width: 580px) {
+  .income-schedule-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .income-row .income-dates { grid-column: 1 / -1; grid-row: auto; }
+  .income-row > .button { grid-column: 1; grid-row: auto; }
+  .income-row > .rule-save { grid-column: 2; grid-row: auto; }
+}
+
+.envelope-amount b.negative-balance,.category-left b.negative-balance{color:#b56e5c}
+
+
+.range-table-row>b.negative { display: grid; justify-items: end; gap: 2px; color: #b56e5c; }
+.range-table-row>b .overspent-label { font: 600 10px "DM Sans", sans-serif; color: #b56e5c; }

@@ -68,3 +68,11 @@
   .transaction-table{min-width:780px}
 }
 .csv-hint{grid-column:1/-1;font-size:8.5px;line-height:1.5;color:#92998d;margin:0}.form-field textarea{width:100%;resize:vertical;min-height:160px;border:1px solid #e6e9e1;border-radius:6px;background:#fff;padding:9px 10px;color:#596657;font:10px/1.5 ui-monospace,Consolas,monospace}.form-field textarea:focus{outline:0;border-color:#9eaf91;box-shadow:0 0 0 3px #dce7d766}
+
+.audit-count{align-self:center;padding:8px 12px;border:1px solid #e7eae1;border-radius:8px;background:#f8f9f5;color:#6f7c6b;font-size:11px}.audit-history-panel{padding:18px 20px}.audit-history-list{list-style:none;margin:8px 0 0;padding:0}.audit-history-list li{position:relative;display:grid;grid-template-columns:28px 1fr;gap:10px;padding:13px 0;border-top:1px solid #eef0eb}.audit-history-list li>div{display:grid;gap:5px}.audit-history-list b{font-size:12px;font-weight:600;color:#526251}.audit-history-list time{font-size:10px;color:#92998d}.audit-timeline-icon{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#f0f3ec;color:#71836a}.audit-strip .text-link{flex:0 0 auto}@media(max-width:580px){.audit-history-panel{padding:13px}.audit-history-list b{font-size:10px}.audit-history-list time{font-size:8px}}
+
+.negative-balance{color:#b56e5c!important}
+
+
+.app-shell[aria-busy='true']{cursor:progress}
+
